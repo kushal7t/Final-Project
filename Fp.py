@@ -9,4 +9,7 @@ from alpha_vantage.timeseries import TimeSeries
 import requests
 from bs4 import BeautifulSoup
 
-###**my key = KZPT32AEEXXIV6Y2**
+confirmed_cases_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse _covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed _global.csv"
+deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse _covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_glo bal.csv"
+
+###**my AlphaVantage key = KZPT32AEEXXIV6Y2**
