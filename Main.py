@@ -92,6 +92,9 @@ final_5['Metal'] = 'Silver'
 final_cols = ["Timestamp","Total_Confirmed_Cases","Total_Deaths","American Market","IBM_High","IBM_Low","Canadian Market","SHOP_High","SHOP_Low","Travel","LUV_High","LUV_Low","Real Estate","KIM_High","KIM_Low","Metal","SIL_High","SIL_Low"]
 final_data = final_5.reindex(columns = final_cols)
 
+final_data.to_csv('COVID_effects_on_market.csv')
+print(final_data)
+
 f_ts = final_data['Timestamp'] 
 f_tcs = (final_data['Total_Confirmed_Cases'] - final_data['Total_Confirmed_Cases'].mean()) / final_data['Total_Confirmed_Cases'].std()
 f_tds = (final_data['Total_Deaths'] - final_data['Total_Deaths'].mean()) / final_data['Total_Deaths'].std()
