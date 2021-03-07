@@ -34,9 +34,9 @@ covid_cd['Timestamp'] = pd.to_datetime(covid_cd['Timestamp'])
 SHOP_data = pd.DataFrame(list(zip(shop_ts,shop_high,shop_low)), columns = ['Timestamp', 'High', 'Low'])
 
 final_shop = covid_cd.merge(SHOP_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
-final_shop['Stock'] = 'SHOP'
+final_shop['Canadian Market'] = 'SHOP'
 
-final_cols = ["Timestamp","Total_Confirmed_Cases","Total_Deaths","Stock","High","Low"]
+final_cols = ["Timestamp","Total_Confirmed_Cases","Total_Deaths","Canadian Market","High","Low"]
 final_CM = final_shop.reindex(columns = final_cols)
 
 final_CM.to_csv('Final_Canadian_Market.csv')
