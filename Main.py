@@ -10,6 +10,7 @@ american_markert = pd.read_csv('https://www.alphavantage.co/query?function=TIME_
 Canadian_markert = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=' + api + '&datatype=csv')
 Travel_sector = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=LUV&outputsize=full&apikey=' + api + '&datatype=csv')
 Real_Estate = pd.read_csv( 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=KIM&outputsize=full&apikey=' + api + '&datatype=csv')
+silver = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=SIL&outputsize=full&apikey=' + api + '&datatype=csv')
 
 total_c = confirm.sum(axis = 0, skipna = True)
 totalc = total_c.to_list()
@@ -76,17 +77,34 @@ KIM_data = pd.DataFrame(list(zip(r_ts,r_high,r_low)), columns = ['Timestamp','KI
 final_4 = final_3.merge(KIM_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
 final_4['Real Estate'] = 'KIM'
 
+silver['timestamp'] = pd.to_datetime(silver['timestamp'])
+sil = silver.loc[(silver['timestamp'] >= '2020-01-22') & (silver['timestamp'] <= '2021-03-06')]
+sil1 = sil.sort_values(by='timestamp',ascending = True)
+
+s_ts = sil1['timestamp'].to_list()
+s_high = sil1['high'].to_list()
+s_low = sil1['low'].to_list()
+met_data = pd.DataFrame(list(zip(s_ts,s_high,s_low)), columns = ['Timestamp', 'SIL_High', 'SIL_Low'])
+
+final_5 = final_4.merge(met_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
+final_5['Metal'] = 'Silver'
+
+final_cols = ["Timestamp","Total_Confirmed_Cases","Total_Deaths","American Market","IBM_High","IBM_Low","Canadian Market","SHOP_High","SHOP_Low","Travel","LUV_High","LUV_Low","Real Estate","KIM_High","KIM_Low","Metal","SIL_High","SIL_Low"]
+final_data = final_5.reindex(columns = final_cols)
+
 f_ts = final_data['Timestamp'] 
 f_tcs = (final_data['Total_Confirmed_Cases'] - final_data['Total_Confirmed_Cases'].mean()) / final_data['Total_Confirmed_Cases'].std()
 f_tds = (final_data['Total_Deaths'] - final_data['Total_Deaths'].mean()) / final_data['Total_Deaths'].std()
-fa_high = (final_data['High'] - final_data['High'].mean()) / final_data['High'].std()
-fa_low = (final_data['Low'] - final_data['Low'].mean()) / final_data['Low'].std()
-fc_high = (final_data['High'] - final_data['High'].mean()) / final_data['High'].std()
-fc_low = (final_data['Low'] - final_data['Low'].mean()) / final_data['Low'].std()
-ft_high = (final_data['High'] - final_data['High'].mean()) / final_data['High'].std()
-ft_low = (final_data['Low'] - final_data['Low'].mean()) / final_data['Low'].std()
+fa_high = (final_data['IBM_High'] - final_data['IBM_High'].mean()) / final_data['IBM_High'].std()
+fa_low = (final_data['IBM_Low'] - final_data['IBM_Low'].mean()) / final_data['IBM_Low'].std()
+fc_high = (final_data['SHOP_High'] - final_data['SHOP_High'].mean()) / final_data['SHOP_High'].std()
+fc_low = (final_data['SHOP_Low'] - final_data['SHOP_Low'].mean()) / final_data['SHOP_Low'].std()
+ft_high = (final_data['LUV_High'] - final_data['LUV_High'].mean()) / final_data['LUV_High'].std()
+ft_low = (final_data['LUV_Low'] - final_data['LUV_Low'].mean()) / final_data['LUV_Low'].std()
 fr_high = (final_data['KIM_High'] - final_data['KIM_High'].mean()) / final_data['KIM_High'].std()
 fr_low = (final_data['KIM_Low'] - final_data['KIM_Low'].mean()) / final_data['KIM_Low'].std()
+fm_high = (final_data['SIL_High'] - final_data['SIL_High'].mean()) / final_data['SIL_High'].std()
+fm_low = (final_data['SIL_Low'] - final_data['SIL_Low'].mean()) / final_data['SIL_Low'].std()
 
 plt.plot(f_ts, f_tcs, label = 'Confirmed Cases')
 plt.plot(f_ts, f_tds, label = 'Deaths')
@@ -168,7 +186,23 @@ plt.ylabel('Frequency')
 plt.legend()
 plt.show()
 
+plt.plot(f_ts, fm_high, label = 'High')
+plt.plot(f_ts, fm_low, label = 'Low')
+plt.title('High vs. Low')
+plt.xlabel('Timeline')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
 
+plt.plot(f_ts, f_tcs, label = 'Cases')
+plt.plot(f_ts, f_tds, label = 'Deaths')
+plt.plot(f_ts, fm_high, label = 'High')
+plt.plot(f_ts, fm_low, label = 'Low')
+plt.title('Overall')
+plt.xlabel('Timeline')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
                       
 
 
