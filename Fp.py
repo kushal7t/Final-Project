@@ -31,16 +31,16 @@ rea = ree.sort_values(by='timestamp',ascending = True)
 r_ts = rea['timestamp'].to_list()
 r_high = rea['high'].to_list()
 r_low = rea['low'].to_list()
-met_data = pd.DataFrame(list(zip(r_ts,r_high,r_low)), columns = ['Timestamp','High', 'Low'])
+KIM_data = pd.DataFrame(list(zip(r_ts,r_high,r_low)), columns = ['Timestamp','KIM_High', 'KIM_Low'])
 
-final= covid_cd.merge(met_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
-final['Stock'] = 'KIM'
+final_4 = covid_cd.merge(KIM_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
+final_4['Real Estate'] = 'KIM'
 
-f_ts = final['Timestamp'] 
-f_tcs = (final['Total_Confirmed_Cases'] - final['Total_Confirmed_Cases'].mean()) / final['Total_Confirmed_Cases'].std()
-f_tds = (final['Total_Deaths'] - final['Total_Deaths'].mean()) / final['Total_Deaths'].std()
-f_high = (final['High'] - final['High'].mean()) / final['High'].std()
-f_low = (final['Low'] - final['Low'].mean()) / final['Low'].std()
+f_ts = final_data['Timestamp'] 
+f_tcs = (final_data['Total_Confirmed_Cases'] - final_data['Total_Confirmed_Cases'].mean()) / final_data['Total_Confirmed_Cases'].std()
+f_tds = (final_data['Total_Deaths'] - final_data['Total_Deaths'].mean()) / final_data['Total_Deaths'].std()
+fr_high = (final_data['KIM_High'] - final_data['KIM_High'].mean()) / final_data['KIM_High'].std()
+fr_low = (final_data['KIM_Low'] - final_data['KIM_Low'].mean()) / final_data['KIM_Low'].std()
 
 plt.plot(f_ts, f_tcs, label = 'Confirmed Cases')
 plt.plot(f_ts, f_tds, label = 'Deaths')
@@ -50,8 +50,8 @@ plt.ylabel('Frequency')
 plt.legend()
 plt.show()
 
-plt.plot(f_ts, f_high, label = 'High')
-plt.plot(f_ts, f_low, label = 'Low')
+plt.plot(f_ts, fr_high, label = 'High')
+plt.plot(f_ts, fr_low, label = 'Low')
 plt.title('Real Estate High vs. Low')
 plt.xlabel('Timeline')
 plt.ylabel('Frequency')
@@ -60,9 +60,9 @@ plt.show()
 
 plt.plot(f_ts, f_tcs, label = 'Confirmed Cases')
 plt.plot(f_ts, f_tds, label = 'Deaths')
-plt.plot(f_ts, f_high, label = 'High')
-plt.plot(f_ts, f_low, label = 'Low')
-plt.title('Overall Real Estate Data')
+plt.plot(f_ts, fr_high, label = 'High')
+plt.plot(f_ts, fr_low, label = 'Low')
+plt.title('Overall Real Estate Data with COVID')
 plt.xlabel('Timeline')
 plt.ylabel('Frequency')
 plt.legend()
