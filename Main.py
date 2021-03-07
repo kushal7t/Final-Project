@@ -8,6 +8,7 @@ deaths = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/
 confirm = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
 american_markert = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=' + api + '&datatype=csv')
 Canadian_markert = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=' + api + '&datatype=csv')
+Travel_sector = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=LUV&outputsize=full&apikey=' + api + '&datatype=csv')
 Real_Estate = pd.read_csv( 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=KIM&outputsize=full&apikey=' + api + '&datatype=csv')
 
 total_c = confirm.sum(axis = 0, skipna = True)
@@ -46,9 +47,22 @@ shop_ts = c_mark['timestamp'].to_list()
 shop_high = c_mark['high'].to_list()
 shop_low = c_mark['low'].to_list()
 
-SHOP_data = pd.DataFrame(list(zip(shop_ts,shop_high,shop_low)), columns = ['Timestamp', 'High', 'Low'])
+SHOP_data = pd.DataFrame(list(zip(shop_ts,shop_high,shop_low)), columns = ['Timestamp', 'SHOP_High', 'SHOP_Low'])
 final_2 = final_1.merge(SHOP_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
 final_2['Canadian Market'] = 'SHOP'
+
+Travel_sector['timestamp'] = pd.to_datetime(Travel_sector['timestamp'])
+Travel = Travel_sector.loc[(Travel_sector['timestamp'] >= '2020-01-22') & (Travel_sector['timestamp'] <= '2021-03-06')]
+Travel = Travel.sort_values(by='timestamp',ascending = True)
+
+LUV_ts = Travel['timestamp'].to_list()
+LUV_high = Travel['high'].to_list()
+LUV_low = Travel['low'].to_list()
+
+Travel_data = pd.DataFrame(list(zip(LUV_ts,LUV_high,LUV_low)), columns = ['Timestamp', 'LUV_High', 'LUV_Low'])
+
+final_3 = final_2.merge(Travel_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
+final_3['Travel'] = 'LUV'
 
 Real_Estate['timestamp'] = pd.to_datetime(Real_Estate['timestamp'])
 ree = Real_Estate.loc[(Real_Estate['timestamp'] >= '2020-01-22') & (Real_Estate['timestamp'] <= '2021-03-06')]
@@ -69,6 +83,8 @@ fa_high = (final_data['High'] - final_data['High'].mean()) / final_data['High'].
 fa_low = (final_data['Low'] - final_data['Low'].mean()) / final_data['Low'].std()
 fc_high = (final_data['High'] - final_data['High'].mean()) / final_data['High'].std()
 fc_low = (final_data['Low'] - final_data['Low'].mean()) / final_data['Low'].std()
+ft_high = (final_data['High'] - final_data['High'].mean()) / final_data['High'].std()
+ft_low = (final_data['Low'] - final_data['Low'].mean()) / final_data['Low'].std()
 fr_high = (final_data['KIM_High'] - final_data['KIM_High'].mean()) / final_data['KIM_High'].std()
 fr_low = (final_data['KIM_Low'] - final_data['KIM_Low'].mean()) / final_data['KIM_Low'].std()
 
@@ -110,6 +126,24 @@ plt.plot(f_ts, f_tcs, label = 'Cases')
 plt.plot(f_ts, f_tds, label = 'Deaths')
 plt.plot(f_ts, fc_high, label = 'High')
 plt.plot(f_ts, fc_low, label = 'Low')
+plt.title('Overall')
+plt.xlabel('Timeline')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
+
+plt.plot(f_ts, ft_high, label = 'High')
+plt.plot(f_ts, ft_low, label = 'Low')
+plt.title('High vs. Low')
+plt.xlabel('Timeline')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
+
+plt.plot(f_ts, f_tcs, label = 'Cases')
+plt.plot(f_ts, f_tds, label = 'Deaths')
+plt.plot(f_ts, ft_high, label = 'High')
+plt.plot(f_ts, ft_low, label = 'Low')
 plt.title('Overall')
 plt.xlabel('Timeline')
 plt.ylabel('Frequency')
