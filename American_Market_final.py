@@ -34,9 +34,9 @@ covid_cd['Timestamp'] = pd.to_datetime(covid_cd['Timestamp'])
 IBM_data = pd.DataFrame(list(zip(ibm_ts,ibm_high,ibm_low)), columns = ['Timestamp', 'High', 'Low'])
 
 final_ibm = covid_cd.merge(IBM_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
-final_ibm['Stock'] = 'IBM'
+final_ibm['American Market'] = 'IBM'
 
-final_cols = ["Timestamp","Total_Confirmed_Cases","Total_Deaths","Stock","High","Low"]
+final_cols = ["Timestamp","Total_Confirmed_Cases","Total_Deaths","American Market","High","Low"]
 final_AME = final_ibm.reindex(columns = final_cols)
 
 final_AME.to_csv('Final_Americal_Market.csv')
