@@ -9,7 +9,7 @@ confirm = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19
 american_markert = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=' + api + '&datatype=csv')
 Canadian_markert = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=' + api + '&datatype=csv')
 Travel_sector = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=LUV&outputsize=full&apikey=' + api + '&datatype=csv')
-
+Real_Estate = pd.read_csv( 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=KIM&outputsize=full&apikey=' + api + '&datatype=csv')
 silver = pd.read_csv('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=SIL&outputsize=full&apikey=' + api + '&datatype=csv')
 
 total_c = confirm.sum(axis = 0, skipna = True)
@@ -65,7 +65,17 @@ Travel_data = pd.DataFrame(list(zip(LUV_ts,LUV_high,LUV_low)), columns = ['Times
 final_3 = final_2.merge(Travel_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
 final_3['Travel'] = 'LUV'
 
+Real_Estate['timestamp'] = pd.to_datetime(Real_Estate['timestamp'])
+ree = Real_Estate.loc[(Real_Estate['timestamp'] >= '2020-01-22') & (Real_Estate['timestamp'] <= '2021-03-06')]
+rea = ree.sort_values(by='timestamp',ascending = True)
 
+r_ts = rea['timestamp'].to_list()
+r_high = rea['high'].to_list()
+r_low = rea['low'].to_list()
+KIM_data = pd.DataFrame(list(zip(r_ts,r_high,r_low)), columns = ['Timestamp','KIM_High', 'KIM_Low'])
+
+final_4 = final_3.merge(KIM_data,how='outer',left_on=['Timestamp'],right_on=["Timestamp"])
+final_4['Real Estate'] = 'KIM'
 
 silver['timestamp'] = pd.to_datetime(silver['timestamp'])
 sil = silver.loc[(silver['timestamp'] >= '2020-01-22') & (silver['timestamp'] <= '2021-03-06')]
@@ -94,7 +104,8 @@ fc_high = (final_data['SHOP_High'] - final_data['SHOP_High'].mean()) / final_dat
 fc_low = (final_data['SHOP_Low'] - final_data['SHOP_Low'].mean()) / final_data['SHOP_Low'].std()
 ft_high = (final_data['LUV_High'] - final_data['LUV_High'].mean()) / final_data['LUV_High'].std()
 ft_low = (final_data['LUV_Low'] - final_data['LUV_Low'].mean()) / final_data['LUV_Low'].std()
-
+fr_high = (final_data['KIM_High'] - final_data['KIM_High'].mean()) / final_data['KIM_High'].std()
+fr_low = (final_data['KIM_Low'] - final_data['KIM_Low'].mean()) / final_data['KIM_Low'].std()
 fm_high = (final_data['SIL_High'] - final_data['SIL_High'].mean()) / final_data['SIL_High'].std()
 fm_low = (final_data['SIL_Low'] - final_data['SIL_Low'].mean()) / final_data['SIL_Low'].std()
 
@@ -160,7 +171,23 @@ plt.ylabel('Frequency')
 plt.legend()
 plt.show()
 
+plt.plot(f_ts, fr_high, label = 'High')
+plt.plot(f_ts, fr_low, label = 'Low')
+plt.title('Real Estate High vs. Low')
+plt.xlabel('Timeline')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
 
+plt.plot(f_ts, f_tcs, label = 'Confirmed Cases')
+plt.plot(f_ts, f_tds, label = 'Deaths')
+plt.plot(f_ts, fr_high, label = 'High')
+plt.plot(f_ts, fr_low, label = 'Low')
+plt.title('Overall Real Estate Data with COVID')
+plt.xlabel('Timeline')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
 
 plt.plot(f_ts, fm_high, label = 'High')
 plt.plot(f_ts, fm_low, label = 'Low')
